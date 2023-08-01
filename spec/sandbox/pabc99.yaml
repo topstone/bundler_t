@@ -1,0 +1,14 @@
+project:
+    name: pabc99
+    description: sample project
+    class:
+        - name: Cabc01
+          description: manage classes
+          method:
+            - name: mabc01
+              description: aaa
+              parameter:
+                <add name>: para01
+            - name: mabc02
+              description: bbb
+        - name: Cabc02

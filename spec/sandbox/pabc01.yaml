@@ -1,0 +1,22 @@
+project:
+    name: pabc01
+    summary: sample project
+    classes:
+        - name: Cabc01
+          description: 1st class
+          methods:
+            - name: mabc01
+              description: 1st method
+              return: Integer
+              parameters:
+                - name: rabc01
+                  description: 1st parameter
+                  default: こんにちは
+                  type: String
+                - name: rabc02
+                  description: 2nd parameter
+                  default: 2
+                  type: Integer
+            - name: mabc02
+        - name: Cabc02
+          description: 2nd class
