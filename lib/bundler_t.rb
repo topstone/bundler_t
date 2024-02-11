@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "bundler_t/class_generator"
 require_relative "bundler_t/project"
 require_relative "bundler_t/version"
 
