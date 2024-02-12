@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_support/inflector"
+require "fileutils"
 require "yaml"
 require_relative "class_generator"
 require_relative "modifier"
@@ -109,10 +110,12 @@ module BundlerT
       puts "* bundle gem #{name} #{options}"
       `bundle gem #{name} #{options}`
       Dir.chdir(name) do
+        requires = ClassGenerator.generate_all(project: self)
         Replacer.replace_all(project: self)
-        Modifier.modify_all(project: self)
+        Modifier.modify_all(project: self, requires: requires)
         puts "* rubocop --autocorrect-all"
         `rubocop --autocorrect-all`
+        FileUtils.mkdir_p("sig")
       end
     end
   end

@@ -12,9 +12,12 @@ module BundlerT
 
     # 登録されている全ての files を変数する。
     # @param project [Project] 作成されるべき project
-    def self.modify_all(project: nil)
+    # @param requires [Array] lib 直下向け require_relative の複数文字列。
+    def self.modify_all(project: nil, requires: [])
       @@project = project
-      @@modifiers.each(&:modify)
+      @@modifiers.each do |modifier|
+        modifier.modify(requires: requires)
+      end
     end
 
     # 依頼元の project
@@ -29,7 +32,8 @@ module BundlerT
     end
 
     # file を編集する。
-    def modify
+    # @param requires [Array] lib 直下向け require_relative の複数文字列。
+    def modify(requires: [])
       fname = filename.gsub("__projectname__", Modifier.project.name)
       destination = "tmp/origin/#{fname}"
       FileUtils.mkdir_p(File.dirname(destination))
@@ -37,22 +41,28 @@ module BundlerT
       File.open(destination, "r") do |d|
         File.open(fname, "w") do |f|
           d.each_line do |line|
-#puts "** #{line}"
             hooked = false
             @hooks.each do |rexp, output|
-#puts "*rexp: #{rexp}"
-              if line.match?(rexp.gsub("__projectname__", Modifier.project.name.camelize))
-#puts "**** match! ****"
-                case output
-                when String
-                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
-                when Array
-                  output.each do |l|
-                    f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
-                  end
+              next unless line.match?(rexp.gsub("__projectname__", Modifier.project.name.camelize))
+
+              case output
+              when "__requires__"
+                f.puts "require_relative \"#{Modifier.project.name.underscore}/version\""
+                requires.each do |r|
+                  f.puts r
                 end
-                hooked = true
+              when String
+                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub(
+                  "__TargetRubyVersion__", BundlerT::TargetRubyVersion
+                )
+              when Array
+                output.each do |l|
+                  f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub(
+                    "__TargetRubyVersion__", BundlerT::TargetRubyVersion
+                  )
+                end
               end
+              hooked = true
             end
             f.puts line unless hooked
           end

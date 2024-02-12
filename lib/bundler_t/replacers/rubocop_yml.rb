@@ -17,7 +17,13 @@ replacer.content = <<~EOS
   Layout/LineLength:
     Max: 144
 
+  Lint/EmptyClass:
+    Enabled: false
+
   Naming/HeredocDelimiterNaming:
+    Enabled: false
+
+  RSpec/NoExpectationExample:
     Enabled: false
 
   Style/StringLiterals:
