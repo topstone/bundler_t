@@ -10,7 +10,8 @@ module BundlerT
     @@replacers = []
 
     # 登録されている全ての files を置き換える。
-    def self.replace_all
+    def self.replace_all(project)
+      @@project = project
       @@replacers.each(&:replace)
     end
 
@@ -18,6 +19,7 @@ module BundlerT
       @@replacers << self
     end
 
+    # file を置き換える。
     def replace
       destination = "tmp/origin/#{filename}"
       FileUtils.mkdir_p(File.dirname(destination))

@@ -2,6 +2,8 @@
 
 require "active_support/inflector"
 require "yaml"
+require_relative "class_generator"
+require_relative "modifier"
 require_relative "replacer"
 
 module BundlerT
@@ -97,7 +99,6 @@ module BundlerT
       @classes.each do |c|
         puts "* class         : #{c.name}"
       end
-      puts "************************************************************"
     end
 
     # bundle gem を実行する
@@ -107,7 +108,8 @@ module BundlerT
       puts "* bundle gem #{name} #{options}"
       `bundle gem #{name} #{options}`
       Dir.chdir(name) do
-        Replacer.replace_all
+        Replacer.replace_all(self)
+        Modifier.modify_all(self)
         puts "* rubocop --autocorrect-all"
         `rubocop --autocorrect-all`
       end
