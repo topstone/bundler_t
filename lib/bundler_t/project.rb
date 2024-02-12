@@ -107,7 +107,7 @@ module BundlerT
       puts "* bundle gem #{name} #{options}"
       `bundle gem #{name} #{options}`
       Dir.chdir(name) do
-        Replacer.replace(".rubocop.yml")
+        Replacer.replace_all
         puts "* rubocop --autocorrect-all"
         `rubocop --autocorrect-all`
       end
