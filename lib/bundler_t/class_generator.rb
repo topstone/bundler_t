@@ -64,7 +64,7 @@ module BundlerT
         end
         f.puts "  class #{name.camelize}"
         f.puts ""
-        unless @beginnin.nil?
+        unless @beginning.nil?
           @beginning.each do |l|
             f.puts "    #{l}"
           end
@@ -87,11 +87,15 @@ module BundlerT
         f.puts "# frozen_string_literal: true"
         f.puts ""
         f.puts "RSpec.describe #{project.name.camelize}::#{name.camelize} do"
-        f.puts "  it \"「#{name.camelize}」class が存在すること\" do"
+        f.puts "  before do"
+        f.puts "    # 前処理があるならここに書く"
+        f.puts "  end"
+        f.puts ""
+        f.puts "  it \"「#{name.camelize}」という class が存在すること\" do"
         f.puts "    expect(described_class).to be_a(Object)"
         f.puts "  end"
         f.puts ""
-        f.puts "  it \"「#{ghost_class}」class が存在しないこと\" do"
+        f.puts "  it \"「#{ghost_class}」という class が存在しないこと\" do"
         f.puts "    expect{ #{ghost_class} }.to raise_error NameError"
         f.puts "  end"
         f.puts "end"
