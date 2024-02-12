@@ -8,11 +8,17 @@ module BundlerT
     attr_accessor :filename, :content
 
     @@replacers = []
+    @@project = nil
 
     # 登録されている全ての files を置き換える。
-    def self.replace_all(project)
+    def self.replace_all(project: nil)
       @@project = project
       @@replacers.each(&:replace)
+    end
+
+    # 依頼元の project
+    def self.project
+      @@project
     end
 
     def initialize
@@ -21,10 +27,11 @@ module BundlerT
 
     # file を置き換える。
     def replace
-      destination = "tmp/origin/#{filename}"
+      fname = filename.gsub(/__projectname__/, Replacer.project.name)
+      destination = "tmp/origin/#{fname}"
       FileUtils.mkdir_p(File.dirname(destination))
-      FileUtils.move(filename, destination)
-      File.open(filename, "w") do |f|
+      FileUtils.move(fname, destination)
+      File.open(fname, "w") do |f|
         f.puts @content
       end
     end

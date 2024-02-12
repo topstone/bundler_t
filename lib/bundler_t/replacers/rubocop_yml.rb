@@ -8,7 +8,7 @@ replacer.content = <<~EOS
     - rubocop-rspec
 
   AllCops:
-    TargetRubyVersion: 3.3
+    TargetRubyVersion: #{BundlerT::TargetRubyVersion}
     NewCops: enable
 
   Layout/EndOfLine:
