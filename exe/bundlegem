@@ -6,3 +6,4 @@ require "bundler_t"
 project1 = BundlerT::Project.new
 
 project1.parse(ARGV)
+project1.bundlegem

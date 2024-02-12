@@ -16,7 +16,7 @@ module BundlerT
       elsif c.instance_of?(Hash)
         raise "class name が不明です" if c["name"].nil?
 
-        @name = c["name"]
+        @name = c["name"].camelize
       else
         raise "作成予定の class は String または Hash である必要があります"
       end
