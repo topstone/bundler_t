@@ -18,6 +18,7 @@ module BundlerT
 
     # command line を解析する
     # 「-」で始まる引数は全て bundler へ渡す
+    # @param argv [Array] 引数。
     def parse(argv)
       argv = [argv] if argv.instance_of?(String) # 全て配列型に揃える
       argv.each do |arg|

@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rspec"
   spec.add_dependency "rubocop-rake"
   spec.add_dependency "rubocop-rspec"
+  spec.add_dependency "sord"
   spec.add_dependency "yard"
 
   # For more information and examples about making a new gem, check out our

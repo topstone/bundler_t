@@ -11,12 +11,14 @@ module BundlerT
     @@project = nil
 
     # 登録されている全ての files を変数する。
+    # @param project [Project] 作成されるべき project
     def self.modify_all(project: nil)
       @@project = project
       @@modifiers.each(&:modify)
     end
 
     # 依頼元の project
+    # @return [Project] 依頼元の project。
     def self.project
       @@project
     end
@@ -41,7 +43,14 @@ module BundlerT
 #puts "*rexp: #{rexp}"
               if line.match?(rexp.gsub("__projectname__", Modifier.project.name.camelize))
 #puts "**** match! ****"
-                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
+                case output
+                when String
+                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
+                when Array
+                  output.each do |l|
+                    f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
+                  end
+                end
                 hooked = true
               end
             end
