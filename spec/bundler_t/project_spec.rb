@@ -14,12 +14,12 @@ RSpec.describe BundlerT::Project do
     end
   end
 
-#  context 'with 引数は "aa y:config.yaml"' do
-#    project2 = described_class.new
-#    project2.parse(["aa", "y:config.yaml"])
+  #  context 'with 引数は "aa y:config.yaml"' do
+  #    project2 = described_class.new
+  #    project2.parse(["aa", "y:config.yaml"])
 
-#    it 'yaml は "config.yaml"' do
-#      expect(project2.yaml).to eq "config.yaml"
-#    end
-#  end
+  #    it 'yaml は "config.yaml"' do
+  #      expect(project2.yaml).to eq "config.yaml"
+  #    end
+  #  end
 end

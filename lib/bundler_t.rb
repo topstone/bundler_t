@@ -2,6 +2,7 @@
 
 require_relative "bundler_t/class_generator"
 require_relative "bundler_t/project"
+require_relative "bundler_t/replacer"
 require_relative "bundler_t/version"
 
 # Bundler_T 関連。
