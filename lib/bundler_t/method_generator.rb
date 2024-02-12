@@ -6,7 +6,7 @@ require "yaml"
 module BundlerT
   # 作成予定の method を表す。
   class MethodGenerator
-    attr_reader :name
+    attr_reader :name, :docstring
 
     # 文字列または Hash を受け付ける。
     # @param m [Object] method 情報。
@@ -28,8 +28,13 @@ module BundlerT
     # @return [Array] method code
     def generate
       strings = []
-      strings += "    def #{@name}"
-      strings += "    end"
+      unless @docstring.nil?
+        @docstring.each do |l|
+          strings << "    # #{l}"
+        end
+      end
+      strings << "    def #{@name}"
+      strings << "    end"
     end
   end
 end

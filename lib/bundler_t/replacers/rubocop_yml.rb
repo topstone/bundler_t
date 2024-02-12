@@ -26,6 +26,9 @@ replacer.content = <<~EOS
   RSpec/NoExpectationExample:
     Enabled: false
 
+  Style/EmptyMethod:
+    Enabled: false
+
   Style/StringLiterals:
     Enabled: true
     EnforcedStyle: double_quotes
