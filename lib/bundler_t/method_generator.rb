@@ -6,7 +6,7 @@ require "yaml"
 module BundlerT
   # 作成予定の method を表す。
   class MethodGenerator
-    attr_reader :name, :docstring
+    attr_reader :name, :docstring, :content
 
     # 文字列または Hash を受け付ける。
     # @param m [Object] method 情報。
@@ -18,6 +18,9 @@ module BundlerT
         @name = m["name"]
         unless m["docstring"].nil?
           @docstring = m["docstring"].split(/\R+/)
+        end
+        unless m["content"].nil?
+          @content = m["content"].split(/\R+/)
         end
       else
         raise "作成予定の method の情報は yaml file 内では String または Hash で書かれている必要があります"
@@ -34,6 +37,11 @@ module BundlerT
         end
       end
       strings << "    def #{@name}"
+      unless @content.nil?
+        @content.each do |l|
+          strings << "      #{l}"
+        end
+      end
       strings << "    end"
     end
   end

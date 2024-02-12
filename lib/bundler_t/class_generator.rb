@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "active_support/inflector"
+require "digest/sha2"
+require "fileutils"
 require "yaml"
 
 module BundlerT
@@ -21,6 +23,9 @@ module BundlerT
         @name = c["name"]
         unless c["docstring"].nil?
           @docstring = c["docstring"].split(/\R+/)
+        end
+        unless c["beginning"].nil?
+          @beginning = c["beginning"].split(/\R+/)
         end
         unless c["methods"].nil?
           c["methods"].each do |m|
@@ -58,6 +63,13 @@ module BundlerT
           end
         end
         f.puts "  class #{name.camelize}"
+        f.puts ""
+        unless @beginnin.nil?
+          @beginning.each do |l|
+            f.puts "    #{l}"
+          end
+        end
+        f.puts ""
         unless @methods.empty?
           @methods.each do |m|
             m.generate.each do |l|
@@ -68,6 +80,23 @@ module BundlerT
         f.puts "  end"
         f.puts "end"
       end
+
+      FileUtils.mkdir_p("spec/#{project.name.underscore}")
+      File.open("spec/#{project.name.underscore}/#{name.underscore}_spec.rb", "w") do |f|
+        ghost_class = name.camelize + (Digest::SHA512.new.update(name).to_s)[0..8]
+        f.puts "# frozen_string_literal: true"
+        f.puts ""
+        f.puts "RSpec.describe #{project.name.camelize}::#{name.camelize} do"
+        f.puts "  it \"「#{name.camelize}」class が存在すること\" do"
+        f.puts "    expect(described_class).to be_a(Object)"
+        f.puts "  end"
+        f.puts ""
+        f.puts "  it \"「#{ghost_class}」class が存在しないこと\" do"
+        f.puts "    expect{ #{ghost_class} }.to raise_error NameError"
+        f.puts "  end"
+        f.puts "end"
+      end
+
       "require_relative \"#{project.name.underscore}/#{name.underscore}\""
     end
   end
