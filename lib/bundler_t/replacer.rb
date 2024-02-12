@@ -22,9 +22,12 @@ module BundlerT
     end
 
     def replace
-      destination = "tmp/" + filename
-      FileUtils.mkdir_p(File.dirname(desination))
+      destination = "tmp/origin/" + filename
+      FileUtils.mkdir_p(File.dirname(destination))
       FileUtils.move(filename, destination)
+      File.open(filename, "w") do |f|
+        f.puts @content
+      end
     end
   end
 end

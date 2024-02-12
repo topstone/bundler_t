@@ -11,6 +11,12 @@ AllCops:
   TargetRubyVersion: 3.3
   NewCops: enable
 
+Layout/EndOfLine:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 144
+
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
@@ -21,7 +27,4 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   Enabled: true
   EnforcedStyle: double_quotes
-
-Layout/LineLength:
-  Max: 144
 EOS
