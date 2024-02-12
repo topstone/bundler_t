@@ -27,7 +27,7 @@ module BundlerT
 
     # file を置き換える。
     def replace
-      fname = filename.gsub(/__projectname__/, Replacer.project.name)
+      fname = filename.gsub("__projectname__", Replacer.project.name)
       destination = "tmp/origin/#{fname}"
       FileUtils.mkdir_p(File.dirname(destination))
       FileUtils.move(fname, destination)

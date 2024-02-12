@@ -28,23 +28,26 @@ module BundlerT
 
     # file を編集する。
     def modify
-      fname = filename.gsub(/__projectname__/, Modifier.project.name)
+      fname = filename.gsub("__projectname__", Modifier.project.name)
       destination = "tmp/origin/#{fname}"
       FileUtils.mkdir_p(File.dirname(destination))
       FileUtils.move(fname, destination)
       File.open(destination, "r") do |d|
-      File.open(fname, "w") do |f|
-        d.each_line do |line|
-        hooked = false
-        @hooks.each do |rexp, output|
-          if line.match?(rexp) then
-            f.puts output.gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
-            hooked = true
+        File.open(fname, "w") do |f|
+          d.each_line do |line|
+#puts "** #{line}"
+            hooked = false
+            @hooks.each do |rexp, output|
+#puts "*rexp: #{rexp}"
+              if line.match?(rexp.gsub("__projectname__", Modifier.project.name.camelize))
+#puts "**** match! ****"
+                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__TargetRubyVersion__", BundlerT::TargetRubyVersion)
+                hooked = true
+              end
+            end
+            f.puts line unless hooked
           end
         end
-        f.puts line unless hooked
-        end
-      end
       end
     end
   end
