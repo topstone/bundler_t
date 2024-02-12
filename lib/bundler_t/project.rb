@@ -2,6 +2,7 @@
 
 require "active_support/inflector"
 require "yaml"
+require_relative "replacer"
 
 module BundlerT
   # project を表す。
@@ -106,7 +107,9 @@ module BundlerT
       puts "* bundle gem #{name} #{options}"
       `bundle gem #{name} #{options}`
       Dir.chdir(name) do
-        
+        Replacer.replace(".rubocop.yml")
+        puts "* rubocop --autocorrect-all"
+        `rubocop --autocorrect-all`
       end
     end
   end
