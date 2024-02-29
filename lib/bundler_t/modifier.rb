@@ -26,6 +26,18 @@ module BundlerT
       @@project
     end
 
+    # 依頼元の project の summary
+    # @return [String] 依頼元の project の summary。
+    def self.summary
+      @@project.summary.nil? ? "" : @@project.summary
+    end
+
+    # 依頼元の project の description
+    # @return [String] 依頼元の project の description。
+    def self.description
+      @@project.description.nil? ? "" : @@project.description
+    end
+
     def initialize
       @hooks = {}
       @@modifiers << self
@@ -52,12 +64,12 @@ module BundlerT
                   f.puts r
                 end
               when String
-                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub(
+                f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.summary).gsub("__projectdescription__", Modifier.description).gsub(
                   "__TargetRubyVersion__", BundlerT::TargetRubyVersion
                 )
               when Array
                 output.each do |l|
-                  f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.project.summary).gsub("__projectdescription__", Modifier.project.description).gsub(
+                  f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.summary).gsub("__projectdescription__", Modifier.description).gsub(
                     "__TargetRubyVersion__", BundlerT::TargetRubyVersion
                   )
                 end

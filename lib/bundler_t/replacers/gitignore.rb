@@ -6,9 +6,11 @@ replacer.content = <<~EOS
   *.gem
   *.rbc
   /.config
+  /.rspec_status
   /coverage/
   /InstalledFiles
   /pkg/
+  /README.md.backup
   /spec/reports/
   /spec/examples.txt
   /test/tmp/
