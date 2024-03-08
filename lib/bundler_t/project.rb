@@ -113,6 +113,8 @@ module BundlerT
         requires = ClassGenerator.generate_all(project: self)
         Replacer.replace_all(project: self)
         Modifier.modify_all(project: self, requires: requires)
+        puts "* bundle install"
+        `bundle install`
         puts "* rubocop --autocorrect-all"
         `rubocop --autocorrect-all`
         FileUtils.mkdir_p("sig")
