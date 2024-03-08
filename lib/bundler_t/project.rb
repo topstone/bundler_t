@@ -4,16 +4,18 @@ require "active_support/inflector"
 require "fileutils"
 require "yaml"
 require_relative "class_generator"
+require_relative "spec_generator"
 require_relative "modifier"
 require_relative "replacer"
 
 module BundlerT
   # project を表す。
   class Project
-    attr_reader :name, :classes, :description, :summary, :yaml_file, :bundler_options, :test, :linter
+    attr_reader :name, :classes, :description, :summary, :yaml_file, :bundler_options, :test, :linter, :specs
 
     def initialize
       @classes = []
+      @specs = []
       @bundler_options = []
     end
 
@@ -51,13 +53,23 @@ module BundlerT
       @description = @yaml["description"] unless @yaml["description"].nil?
       @test = @yaml["test"] unless @yaml["test"].nil?
       @linter = @yaml["linter"] unless @yaml["linter"].nil?
-      return if @yaml["classes"].nil?
+      unless @yaml["classes"].nil?
 
       classes = @yaml["classes"]
       raise "classes が配列以外です" unless classes.instance_of?(Array)
 
       classes.each do |c|
         @classes << ClassGenerator.new(c)
+      end
+      end
+      unless @yaml["specs"].nil?
+
+      specs = @yaml["specs"]
+      raise "specs が配列以外です" unless specs.instance_of?(Array)
+
+      specs.each do |s|
+        @specs << SpecGenerator.new(s)
+      end
       end
     end
 
@@ -100,6 +112,14 @@ module BundlerT
       end
       @classes.each do |c|
         puts "* class         : #{c.name}"
+        unless c.methods.nil? then
+          c.methods.each do |m|
+            puts "*   method      : #{m.name}"
+          end
+        end
+      end
+      @specs.each do |s|
+        puts "* spec          : #{s.name}"
       end
     end
 
@@ -111,12 +131,15 @@ module BundlerT
       `bundle gem #{name} #{options}`
       Dir.chdir(name) do
         requires = ClassGenerator.generate_all(project: self)
+        SpecGenerator.generate_all(project: self)
         Replacer.replace_all(project: self)
         Modifier.modify_all(project: self, requires: requires)
         puts "* bundle install"
-        `bundle install`
+        puts `bundle install`
         puts "* rubocop --autocorrect-all"
-        `rubocop --autocorrect-all`
+        puts `rubocop --autocorrect-all`
+        puts "* rake spec"
+        puts `rake spec`
         FileUtils.mkdir_p("sig")
       end
     end

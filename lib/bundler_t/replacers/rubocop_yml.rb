@@ -29,6 +29,9 @@ replacer.content = <<~EOS
   Style/EmptyMethod:
     Enabled: false
 
+  Style/RedundantInitialize:
+    Enabled: false
+
   Style/StringLiterals:
     Enabled: true
     EnforcedStyle: double_quotes
