@@ -18,9 +18,9 @@ module BundlerT
       raise "exe name が不明です" if e["name"].nil?
 
       @name = e["name"]
-      raise "exe の内容 (content) が不明です" if f["content"].nil?
+      raise "exe の内容 (content) が不明です" if e["content"].nil?
 
-      @content = f["content"].split(/\R+/)
+      @content = e["content"].split(/\R+/)
 
 
 
@@ -38,7 +38,15 @@ module BundlerT
     # 個別 exe 生成。
     # @param project [Project]
     def generate(project:)
+      FileUtils.mkdir_p("exe")
       File.open("exe/#{@name}", "w") do |f|
+        f.puts "#!/usr/bin/env ruby"
+        f.puts "# frozen_string_literal: true"
+        f.puts ""
+        f.puts "require \"#{project.name}\""
+        f.puts ""
+        f.puts "described_module = #{project.name.camelize}"
+        f.puts ""
         @content.each do |l|
           f.puts l
         end
