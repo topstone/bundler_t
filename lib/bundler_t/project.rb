@@ -5,6 +5,7 @@ require "fileutils"
 require "yaml"
 require_relative "class_generator"
 require_relative "spec_generator"
+require_relative "file_generator"
 require_relative "modifier"
 require_relative "replacer"
 
@@ -16,6 +17,7 @@ module BundlerT
     def initialize
       @classes = []
       @specs = []
+      @files = []
       @bundler_options = []
     end
 
@@ -55,21 +57,32 @@ module BundlerT
       @linter = @yaml["linter"] unless @yaml["linter"].nil?
       unless @yaml["classes"].nil?
 
-      classes = @yaml["classes"]
-      raise "classes が配列以外です" unless classes.instance_of?(Array)
+        classes = @yaml["classes"]
+        raise "classes が配列以外です" unless classes.instance_of?(Array)
 
-      classes.each do |c|
-        @classes << ClassGenerator.new(c)
+        classes.each do |c|
+          @classes << ClassGenerator.new(c)
+        end
       end
-      end
+
       unless @yaml["specs"].nil?
 
-      specs = @yaml["specs"]
-      raise "specs が配列以外です" unless specs.instance_of?(Array)
+        specs = @yaml["specs"]
+        raise "specs が配列以外です" unless specs.instance_of?(Array)
 
-      specs.each do |s|
-        @specs << SpecGenerator.new(s)
+        specs.each do |s|
+          @specs << SpecGenerator.new(s)
+        end
       end
+
+      return if @yaml["files"].nil?
+
+
+      files = @yaml["files"]
+      raise "files が配列以外です" unless files.instance_of?(Array)
+
+      files.each do |f|
+        @files << FileGenerator.new(f)
       end
     end
 
@@ -112,14 +125,17 @@ module BundlerT
       end
       @classes.each do |c|
         puts "* class         : #{c.name}"
-        unless c.methods.nil? then
-          c.methods.each do |m|
-            puts "*   method      : #{m.name}"
-          end
+        next if c.methods.nil?
+
+        c.methods.each do |m|
+          puts "*   method      : #{m.name}"
         end
       end
       @specs.each do |s|
         puts "* spec          : #{s.name}"
+      end
+      @files.each do |f|
+        puts "* file          : #{f.name}"
       end
     end
 
@@ -132,14 +148,48 @@ module BundlerT
       Dir.chdir(name) do
         requires = ClassGenerator.generate_all(project: self)
         SpecGenerator.generate_all(project: self)
+        FileGenerator.generate_all(project: self)
         Replacer.replace_all(project: self)
-        Modifier.modify_all(project: self, requires: requires)
+        Modifier.modify_all(project: self, requires:)
         puts "* bundle install"
         puts `bundle install`
         puts "* rubocop --autocorrect-all"
         puts `rubocop --autocorrect-all`
         puts "* rake spec"
         puts `rake spec`
+        FileUtils.mkdir_p("sig")
+      end
+    end
+
+    # bundle gem simple を実行する
+    def bundlegemsimple(project_name)
+      @name = project_name
+      puts "************************************************************"
+      puts "* bundle gem #{@name} --test=rspec --linter=rubocop"
+      `bundle gem #{@name} --test=rspec --linter=rubocop`
+      Dir.chdir(name) do
+        File.open("lib/my_code.rb", "w") do |f|
+          f.puts "# frozen_string_literal: true"
+        end
+        Dir.mkdir("exe")
+        File.open("exe/#{@name}", "w") do |f|
+          f.puts "#!/usr/bin/env ruby"
+          f.puts "# frozen_string_literal: true"
+          f.puts ""
+          f.puts "require \"#{@name}\""
+          f.puts ""
+          f.puts "require_relative \"../lib/my_code.rb\""
+        end
+        Replacer.replace_all(project: self)
+        Modifier.modify_all(project: self)
+        puts "* bundle install"
+        puts `bundle install`
+        puts "* rubocop --autocorrect-all"
+        puts `rubocop --autocorrect-all`
+        puts "* rake spec"
+        puts `rake spec`
+        puts "* git add ."
+        puts `git add .`
         FileUtils.mkdir_p("sig")
       end
     end

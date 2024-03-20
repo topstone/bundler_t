@@ -8,7 +8,7 @@ replacer.content = <<~EOS
     - rubocop-rspec
 
   AllCops:
-    TargetRubyVersion: #{BundlerT::TargetRubyVersion}
+    TargetRubyVersion: #{BundlerT::TARGET_RUBY_VERSION}
     NewCops: enable
 
   Layout/EndOfLine:
@@ -21,6 +21,10 @@ replacer.content = <<~EOS
     Enabled: false
 
   Naming/HeredocDelimiterNaming:
+    Enabled: false
+
+
+  RSpec/EmptyExampleGroup:
     Enabled: false
 
   RSpec/NoExpectationExample:

@@ -20,16 +20,29 @@ module BundlerT
         @name = c
       elsif c.instance_of?(Hash)
         raise "class name が不明です" if c["name"].nil?
+
         @name = c["name"]
-        unless c["docstring"].nil?
-          @docstring = c["docstring"].split(/\R+/)
+        @docstring = c["docstring"].split(/\R+/) unless c["docstring"].nil?
+        @beginning = c["beginning"].split(/\R+/) unless c["beginning"].nil?
+        c["methods"]&.each do |m|
+          @methods << MethodGenerator.new(m)
         end
-        unless c["beginning"].nil?
-          @beginning = c["beginning"].split(/\R+/)
+        unless c["requirements"].nil?
+          if c["requirements"].is_a?(String)
+            @requirements = [c["requirements"]]
+          elsif c["requirements"].is_a?(Array)
+            @requirements = c["requirements"]
+          else
+            raise "requirements は Array か String である必要があります。"
+          end
         end
-        unless c["methods"].nil?
-          c["methods"].each do |m|
-            @methods << MethodGenerator.new(m)
+        unless c["requirements_relative"].nil?
+          if c["requirements_relative"].is_a?(String)
+            @requirements_relative = [c["requirements_relative"]]
+          elsif c["requirements_relative"].is_a?(Array)
+            @requirements_relative = c["requirements_relative"]
+          else
+            raise "requirements_relative は Array か String である必要があります。"
           end
         end
       else
@@ -56,18 +69,21 @@ module BundlerT
       File.open("lib/#{project.name.underscore}/#{name.underscore}.rb", "w") do |f|
         f.puts "# frozen_string_literal: true"
         f.puts ""
+        @requirements&.each do |l|
+          f.puts "require \"#{l}\""
+        end
+        @requirements_relative&.each do |l|
+          f.puts "require_relative \"#{l}\""
+        end
+        f.puts ""
         f.puts "module #{project.name.camelize}"
-        unless @docstring.nil?
-          @docstring.each do |l|
-            f.puts "  # #{l}"
-          end
+        @docstring&.each do |l|
+          f.puts "  # #{l}"
         end
         f.puts "  class #{name.camelize}"
         f.puts ""
-        unless @beginning.nil?
-          @beginning.each do |l|
-            f.puts "    #{l}"
-          end
+        @beginning&.each do |l|
+          f.puts "    #{l}"
         end
         f.puts ""
         unless @methods.empty?
@@ -83,7 +99,7 @@ module BundlerT
 
       FileUtils.mkdir_p("spec/#{project.name.underscore}")
       File.open("spec/#{project.name.underscore}/#{name.underscore}_spec.rb", "w") do |f|
-        ghost_class = name.camelize + (Digest::SHA512.new.update(name).to_s)[0..8]
+        ghost_class = name.camelize + Digest::SHA512.new.update(name).to_s[0..8]
         f.puts "# frozen_string_literal: true"
         f.puts ""
         f.puts "RSpec.describe #{project.name.camelize}::#{name.camelize} do"

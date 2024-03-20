@@ -16,7 +16,7 @@ module BundlerT
     def self.modify_all(project: nil, requires: [])
       @@project = project
       @@modifiers.each do |modifier|
-        modifier.modify(requires: requires)
+        modifier.modify(requires:)
       end
     end
 
@@ -65,12 +65,12 @@ module BundlerT
                 end
               when String
                 f.puts output.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.summary).gsub("__projectdescription__", Modifier.description).gsub(
-                  "__TargetRubyVersion__", BundlerT::TargetRubyVersion
+                  "__TARGET_RUBY_VERSION__", BundlerT::TARGET_RUBY_VERSION
                 )
               when Array
                 output.each do |l|
                   f.puts l.gsub("__projectname__", Modifier.project.name.camelize).gsub("__projectsummary__", Modifier.summary).gsub("__projectdescription__", Modifier.description).gsub(
-                    "__TargetRubyVersion__", BundlerT::TargetRubyVersion
+                    "__TARGET_RUBY_VERSION__", BundlerT::TARGET_RUBY_VERSION
                   )
                 end
               end

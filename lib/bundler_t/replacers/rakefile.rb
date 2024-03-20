@@ -24,6 +24,5 @@ replacer.content = <<~EOS
     puts `yard doc ./lib/**/*.rb`
   end
 
-
   task default: %i[rubocop yard spec]
 EOS

@@ -14,14 +14,16 @@ module BundlerT
     # Hash を受け付ける。
     # @param s [Object] spec 情報。
     def initialize(s)
-      if s.instance_of?(Hash)
-        raise "spec name が不明です" if s["name"].nil?
-        @name = s["name"]
-        raise "spec の内容 (content) が不明です" if s["content"].nil?
-        @content = s["content"].split(/\R+/)
-      else
-        raise "作成予定の spec の情報は yaml file 内では Hash で書かれている必要があります"
-      end
+      raise "作成予定の spec の情報は yaml file 内では Hash で書かれている必要があります" unless s.instance_of?(Hash)
+      raise "spec name が不明です" if s["name"].nil?
+
+      @name = s["name"]
+      raise "spec の内容 (content) が不明です" if s["content"].nil?
+
+      @content = s["content"].split(/\R+/)
+
+
+
       @@specs << self
     end
 

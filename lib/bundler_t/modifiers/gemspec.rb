@@ -2,7 +2,7 @@
 
 modifier = BundlerT::Modifier.new
 modifier.filename = "__projectname__.gemspec"
-modifier.hooks['  spec\.required_ruby_version = ">= '] = '  spec.required_ruby_version = ">= __TargetRubyVersion__.0"'
+modifier.hooks['  spec\.required_ruby_version = ">= '] = '  spec.required_ruby_version = ">= __TARGET_RUBY_VERSION__.0"'
 modifier.hooks['  spec\.summary = '] = '  spec.summary = "__projectsummary__"'
 modifier.hooks['  spec\.description = '] = '  spec.description = "__projectdescription__"'
 modifier.hooks['  spec\.homepage = '] = "  # spec.homepage = \"TODO: Put your gem's website or public repo URL here.\""

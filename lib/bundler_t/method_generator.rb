@@ -15,13 +15,10 @@ module BundlerT
         @name = m
       elsif m.instance_of?(Hash)
         raise "method name が不明です" if m["name"].nil?
+
         @name = m["name"]
-        unless m["docstring"].nil?
-          @docstring = m["docstring"].split(/\R+/)
-        end
-        unless m["content"].nil?
-          @content = m["content"].split(/\R+/)
-        end
+        @docstring = m["docstring"].split(/\R+/) unless m["docstring"].nil?
+        @content = m["content"].split(/\R+/) unless m["content"].nil?
       else
         raise "作成予定の method の情報は yaml file 内では String または Hash で書かれている必要があります"
       end
@@ -31,16 +28,12 @@ module BundlerT
     # @return [Array] method code
     def generate
       strings = []
-      unless @docstring.nil?
-        @docstring.each do |l|
-          strings << "    # #{l}"
-        end
+      @docstring&.each do |l|
+        strings << "    # #{l}"
       end
       strings << "    def #{@name}"
-      unless @content.nil?
-        @content.each do |l|
-          strings << "      #{l}"
-        end
+      @content&.each do |l|
+        strings << "      #{l}"
       end
       strings << "    end"
     end

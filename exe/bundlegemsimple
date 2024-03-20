@@ -2,3 +2,7 @@
 # frozen_string_literal: true
 
 require "bundler_t"
+
+project1 = BundlerT::Project.new
+
+project1.bundlegemsimple(ARGV[0])
