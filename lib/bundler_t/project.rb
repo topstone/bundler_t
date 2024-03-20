@@ -6,6 +6,7 @@ require "yaml"
 require_relative "class_generator"
 require_relative "spec_generator"
 require_relative "file_generator"
+require_relative "exe_generator"
 require_relative "modifier"
 require_relative "replacer"
 
@@ -18,6 +19,7 @@ module BundlerT
       @classes = []
       @specs = []
       @files = []
+      @exes = []
       @bundler_options = []
     end
 
@@ -72,6 +74,16 @@ module BundlerT
 
         specs.each do |s|
           @specs << SpecGenerator.new(s)
+        end
+      end
+
+      unless @yaml["exes"].nil?
+
+        exes = @yaml["exes"]
+        raise "exes が配列以外です" unless exes.instance_of?(Array)
+
+        exes.each do |e|
+          @exes << ExeGenerator.new(e)
         end
       end
 
@@ -137,6 +149,9 @@ module BundlerT
       @files.each do |f|
         puts "* file          : #{f.name}"
       end
+      @exes.each do |e|
+        puts "* exe           : #{e.name}"
+      end
     end
 
     # bundle gem を実行する
@@ -148,6 +163,7 @@ module BundlerT
       Dir.chdir(name) do
         requires = ClassGenerator.generate_all(project: self)
         SpecGenerator.generate_all(project: self)
+        ExeGenerator.generate_all(project: self)
         FileGenerator.generate_all(project: self)
         Replacer.replace_all(project: self)
         Modifier.modify_all(project: self, requires:)

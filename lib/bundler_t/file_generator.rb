@@ -18,7 +18,7 @@ module BundlerT
       raise "file name が不明です" if f["name"].nil?
 
       @name = f["name"]
-      raise "spec の内容 (content) が不明です" if f["content"].nil?
+      raise "file の内容 (content) が不明です" if f["content"].nil?
 
       @content = f["content"].split(/\R+/)
 
