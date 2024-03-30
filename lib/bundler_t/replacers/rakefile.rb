@@ -24,5 +24,10 @@ replacer.content = <<~EOS
     puts `yard doc ./lib/**/*.rb`
   end
 
-  task default: %i[rubocop yard spec]
+  desc "git status"
+  task :status do
+    puts `git status`
+  end
+
+  task default: %i[rubocop yard spec build status]
 EOS
